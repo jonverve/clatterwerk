@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flapboard — examples</title>
+<link rel="stylesheet" href="../flapboard.css">
+<style>
+  body { margin: 0; background: #0a0d12; color: #e9e4d6; font-family: Georgia, serif; padding: 40px 24px 80px; }
+  h1 { font-weight: 400; }
+  h2 { font-weight: 400; margin-top: 56px; border-bottom: 1px solid #2a2f3a; padding-bottom: 6px; }
+  p  { max-width: 720px; color: #b9b3a4; line-height: 1.5; }
+  .demo { background: #11151c; border: 1px solid #2a2f3a; border-radius: 8px; padding: 28px 20px; }
+  .stats { display: flex; gap: 34px; flex-wrap: wrap; align-items: flex-start; }
+  .stat  { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .stat small { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #8c8678; }
+  .ctl { margin-top: 22px; display: flex; gap: 8px; flex-wrap: wrap; }
+  button { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+           background: #11151c; border: 1px solid #2a2f3a; color: #8c8678; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+  button:hover { color: #e9e4d6; border-color: #3a4150; }
+  input[type=number] { width: 110px; background: #0a0d12; color: #e9e4d6; border: 1px solid #2a2f3a; border-radius: 4px; padding: 6px 8px; font-family: ui-monospace, monospace; }
+  .big { --flap-height: 64px; --flap-width: 44px; }
+  .alpha { --flap-color: #d9b26a; }
+</style>
+</head>
+<body>
+
+<h1>Flapboard examples</h1>
+<p>Open this file in any browser — no build step, no server required.</p>
+
+<h2>1 &middot; A group of boards in separate places, driven by one trigger</h2>
+<p>Three boards mounted in different DOM locations, joined into a group. The buttons fire a single
+   CustomEvent; the group listens and updates all boards together.</p>
+<div class="demo">
+  <div class="stats">
+    <div class="stat"><div id="b-flights"></div><small>Crew-flights</small></div>
+    <div class="stat"><div id="b-crew"></div><small>Crew</small></div>
+    <div class="stat"><div id="b-years"></div><small>Crew-years</small></div>
+  </div>
+  <div class="ctl">
+    <button data-vals='["1589","788","208.5"]'>Full data</button>
+    <button data-vals='["412","256","96.3"]'>Filtered</button>
+    <button data-vals='["27","11","4.0"]'>Tiny subset</button>
+    <button id="sweep">Sweep (refresh)</button>
+    <button id="intro">Intro (flywheel)</button>
+  </div>
+</div>
+
+<h2>2 &middot; Modes</h2>
+<p><em>Cascade</em>: all cells clatter at once at constant speed and stop independently — the live-update mode.
+   <em>Flywheel</em>: spin-up, blur, hard stop — the page-load showpiece. <em>Single</em>: one quiet flip per cell.</p>
+<div class="demo">
+  <div id="b-modes" class="big"></div>
+  <div class="ctl">
+    <button id="m-cascade">Cascade</button>
+    <button id="m-flywheel">Flywheel</button>
+    <button id="m-single">Single</button>
+    <input type="number" id="m-value" value="2026" aria-label="Value to display">
+  </div>
+</div>
+
+<h2>3 &middot; 3D flip off (classic flat look)</h2>
+<p>Same engine, <code>threeD: false</code> — no shared perspective, tilt, pop, overhang, shading, or slam
+   theatrics. Quieter, fully contained in each cell.</p>
+<div class="demo">
+  <div id="b-flat"></div>
+  <div class="ctl">
+    <button id="f-rand">Random value</button>
+    <button id="f-sweep">Sweep</button>
+  </div>
+</div>
+
+<h2>4 &middot; Custom drum (letters) + declarative mount</h2>
+<p>This board was created from markup alone via <code>Flapboard.mount()</code> with an alphanumeric drum.</p>
+<div class="demo">
+  <div class="alpha" data-flapboard="HELLO" data-flap-chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-:!?" data-flap-width="7" data-flap-align="left" data-flap-group="words"></div>
+  <div class="ctl">
+    <button class="word">WORLD</button>
+    <button class="word">SOLARI</button>
+    <button class="word">BOARDS!</button>
+  </div>
+</div>
+
+<script src="../flapboard.js"></script>
+<script>
+  /* Example 1 — group + trigger */
+  var flights = Flapboard.create("#b-flights", { value: "1589", width: 4 });
+  var crew    = Flapboard.create("#b-crew",    { value: "788",  width: 3 });
+  var years   = Flapboard.create("#b-years",   { value: "208.5", width: 5 });
+  var stats   = Flapboard.group([flights, crew, years]);
+
+  stats.listen(document, "stats:change", function (e) { return e.detail; });
+  document.querySelectorAll("[data-vals]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.dispatchEvent(new CustomEvent("stats:change", { detail: JSON.parse(btn.dataset.vals) }));
+    });
+  });
+  document.getElementById("sweep").addEventListener("click", function () { stats.sweep(); });
+  document.getElementById("intro").addEventListener("click", function () { stats.intro(); });
+
+  /* Example 2 — modes */
+  var modes = Flapboard.create("#b-modes", { value: "1961", width: 4 });
+  function modeVal() { return document.getElementById("m-value").value || "0"; }
+  document.getElementById("m-cascade").addEventListener("click", function () { modes.cascade(modeVal()); });
+  document.getElementById("m-flywheel").addEventListener("click", function () { modes.flywheel(modeVal()); });
+  document.getElementById("m-single").addEventListener("click", function () { modes.single(modeVal()); });
+
+  /* Example 3 — flat (threeD off) */
+  var flat = Flapboard.create("#b-flat", { value: "365.25", width: 6, threeD: false });
+  document.getElementById("f-rand").addEventListener("click", function () {
+    flat.set((Math.random() * 999).toFixed(2));
+  });
+  document.getElementById("f-sweep").addEventListener("click", function () { flat.sweep(); });
+
+  /* Example 4 — declarative */
+  var mounted = Flapboard.mount();
+  document.querySelectorAll(".word").forEach(function (btn) {
+    btn.addEventListener("click", function () { mounted.groups.words.set(btn.textContent); });
+  });
+</script>
+</body>
+</html>

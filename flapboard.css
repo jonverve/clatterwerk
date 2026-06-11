@@ -1,0 +1,132 @@
+/*!
+ * Flapboard 1.0.0 — stylesheet
+ * Copyright (c) 2026 [YOUR NAME] — MIT License
+ *
+ * Every visual knob is a CSS custom property on .flapboard, so boards can be
+ * themed per-instance:  #myboard { --flap-height: 64px; --flap-color: #fff; }
+ */
+
+.flapboard {
+  --flap-width: 30px;          /* cell width */
+  --flap-height: 44px;         /* cell height (font size derives from this) */
+  --flap-gap: 3px;             /* gap between cells */
+  --flap-font: ui-monospace, "JetBrains Mono", "Cascadia Mono", Consolas, Menlo, monospace;
+  --flap-weight: 500;
+  --flap-color: #e9e4d6;       /* glyph ink */
+  --flap-bg-top: #1c232e;      /* upper card surface */
+  --flap-bg-bottom: #161c25;   /* lower card surface (slightly darker = depth) */
+  --flap-split: #0a0d12;       /* centerline rod/gap color (match page bg) */
+  --flap-radius: 3px;          /* card corner radius */
+  --flap-perspective: 420px;   /* 3D mode: camera distance (lower = more drama) */
+  --flap-tilt: 5deg;           /* 3D mode: wall-mount lean */
+  --flap-overhang: 2.5px;      /* 3D mode: card width beyond the slot, per side */
+  display: inline-block;
+}
+
+/* 3D mode: one shared vanishing point for the whole board, like a viewer
+   standing slightly above board center. Cells at the edges flip obliquely. */
+.flapboard--3d {
+  perspective: var(--flap-perspective);
+  perspective-origin: 50% 35%;
+}
+
+.fb-row { display: flex; gap: var(--flap-gap); }
+.flapboard--3d .fb-row {
+  transform: rotateX(var(--flap-tilt));
+  transform-style: preserve-3d;
+}
+
+.fb-cell {
+  position: relative;
+  width: var(--flap-width);
+  height: var(--flap-height);
+  font-family: var(--flap-font);
+  font-weight: var(--flap-weight);
+  font-size: calc(var(--flap-height) * 0.59);
+  color: var(--flap-color);
+}
+.flapboard--3d .fb-cell { transform-style: preserve-3d; }
+/* Flat mode: contained per-cell perspective, no shared geometry */
+.flapboard--flat .fb-cell { perspective: calc(var(--flap-height) * 6); }
+
+.fb-half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+}
+.fb-glyph {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--flap-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fb-top {
+  top: 0;
+  background: var(--flap-bg-top);
+  border-radius: var(--flap-radius) var(--flap-radius) 0 0;
+}
+.fb-top .fb-glyph { top: 0; }
+.fb-bottom {
+  bottom: 0;
+  background: var(--flap-bg-bottom);
+  border-radius: 0 0 var(--flap-radius) var(--flap-radius);
+}
+.fb-bottom .fb-glyph { top: calc(var(--flap-height) / -2); }
+
+/* The two single-faced quarter-turn flaps (see flapboard.js for why there
+   are two instead of one double-faced card). */
+.fb-flap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  visibility: hidden;
+  will-change: transform;
+}
+/* 3D mode: the card is wider than its slot, so it breaks the frame in flight */
+.flapboard--3d .fb-flap {
+  left: calc(var(--flap-overhang) * -1);
+  width: calc(100% + var(--flap-overhang) * 2);
+}
+.fb-ftop {
+  top: 0;
+  transform-origin: 50% 100%;
+  background: var(--flap-bg-top);
+  border-radius: var(--flap-radius) var(--flap-radius) 0 0;
+}
+.fb-ftop .fb-glyph { top: 0; }
+.fb-fbot {
+  top: 50%;
+  transform-origin: 50% 0%;
+  background: var(--flap-bg-bottom);
+  border-radius: 0 0 var(--flap-radius) var(--flap-radius);
+}
+.fb-fbot .fb-glyph { top: calc(var(--flap-height) / -2); }
+
+/* Lighting overlays — flat black layers whose opacity animates; no gradients */
+.fb-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Centerline rod */
+.fb-split {
+  position: absolute;
+  top: calc(50% - 1px);
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--flap-split);
+}

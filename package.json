@@ -1,0 +1,36 @@
+{
+  "name": "flapboard",
+  "version": "1.0.0",
+  "description": "Split-flap (Solari) display boards for the web — physical drum mechanics, glitch-free no-backface rendering, zero dependencies.",
+  "main": "flapboard.js",
+  "style": "flapboard.css",
+  "files": [
+    "flapboard.js",
+    "flapboard.css",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "split-flap",
+    "splitflap",
+    "solari",
+    "flip",
+    "flipboard",
+    "departure-board",
+    "counter",
+    "ticker",
+    "animation",
+    "vanilla",
+    "zero-dependency"
+  ],
+  "author": "[YOUR NAME]",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/[YOUR-GITHUB]/flapboard.git"
+  },
+  "homepage": "https://github.com/[YOUR-GITHUB]/flapboard#readme",
+  "bugs": {
+    "url": "https://github.com/[YOUR-GITHUB]/flapboard/issues"
+  }
+}
