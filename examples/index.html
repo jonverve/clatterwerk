@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Flapboard — examples</title>
-<link rel="stylesheet" href="../flapboard.css">
+<title>Clatterwerk — examples</title>
+<link rel="stylesheet" href="../clatterwerk.css">
 <style>
   body { margin: 0; background: #0a0d12; color: #e9e4d6; font-family: Georgia, serif; padding: 40px 24px 80px; }
   h1 { font-weight: 400; }
@@ -26,7 +26,7 @@
 </head>
 <body>
 
-<h1>Flapboard examples</h1>
+<h1>Clatterwerk examples</h1>
 <p>Open this file in any browser — no build step, no server required.</p>
 
 <div class="ctl" style="margin-top:18px">
@@ -83,11 +83,11 @@ curve all scale with it; speed is a rate multiplier on top.</small></p>
 </div>
 
 <h2>4 &middot; Custom drum (letters) + declarative mount</h2>
-<p>This board was created from markup alone via <code>Flapboard.mount()</code> — note its
+<p>This board was created from markup alone via <code>Clatterwerk.mount()</code> — note its
    <code>data-flap-time="0.4"</code> giving it a slightly statelier tempo of its own until the
    global control above overrides it.</p>
 <div class="demo">
-  <div class="alpha" data-flapboard="HELLO" data-flap-chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-:!?" data-flap-width="7" data-flap-align="left" data-flap-time="0.4" data-flap-group="words"></div>
+  <div class="alpha" data-clatterwerk="HELLO" data-flap-chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-:!?" data-flap-width="7" data-flap-align="left" data-flap-time="0.4" data-flap-group="words"></div>
   <div class="ctl">
     <button class="word">WORLD</button>
     <button class="word">DEPART</button>
@@ -95,13 +95,13 @@ curve all scale with it; speed is a rate multiplier on top.</small></p>
   </div>
 </div>
 
-<script src="../flapboard.js"></script>
+<script src="../clatterwerk.js"></script>
 <script>
   /* Example 1 — group + trigger */
-  var trains    = Flapboard.create("#b-trains",    { value: "1208", width: 4 });
-  var platforms = Flapboard.create("#b-platforms", { value: "42",   width: 3 });
-  var delay     = Flapboard.create("#b-delay",     { value: "18.5", width: 5 });
-  var station   = Flapboard.group([trains, platforms, delay]);
+  var trains    = Clatterwerk.create("#b-trains",    { value: "1208", width: 4 });
+  var platforms = Clatterwerk.create("#b-platforms", { value: "42",   width: 3 });
+  var delay     = Clatterwerk.create("#b-delay",     { value: "18.5", width: 5 });
+  var station   = Clatterwerk.group([trains, platforms, delay]);
 
   station.listen(document, "station:change", function (e) { return e.detail; });
   document.querySelectorAll("[data-vals]").forEach(function (btn) {
@@ -113,21 +113,21 @@ curve all scale with it; speed is a rate multiplier on top.</small></p>
   document.getElementById("intro").addEventListener("click", function () { station.intro(); });
 
   /* Example 2 — a single board, three modes */
-  var modes = Flapboard.create("#b-modes", { value: "1956", width: 4 });
+  var modes = Clatterwerk.create("#b-modes", { value: "1956", width: 4 });
   function modeVal() { return document.getElementById("m-value").value || "0"; }
   document.getElementById("m-cascade").addEventListener("click", function () { modes.cascade(modeVal()); });
   document.getElementById("m-flywheel").addEventListener("click", function () { modes.flywheel(modeVal()); });
   document.getElementById("m-single").addEventListener("click", function () { modes.single(modeVal()); });
 
   /* Example 3 — flat (threeD off) */
-  var flat = Flapboard.create("#b-flat", { value: "365.25", width: 6, threeD: false });
+  var flat = Clatterwerk.create("#b-flat", { value: "365.25", width: 6, threeD: false });
   document.getElementById("f-rand").addEventListener("click", function () {
     flat.set((Math.random() * 999).toFixed(2));
   });
   document.getElementById("f-sweep").addEventListener("click", function () { flat.sweep(); });
 
   /* Example 4 — declarative */
-  var mounted = Flapboard.mount();
+  var mounted = Clatterwerk.mount();
   document.querySelectorAll(".word").forEach(function (btn) {
     btn.addEventListener("click", function () { mounted.groups.words.set(btn.textContent); });
   });

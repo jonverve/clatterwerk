@@ -1,14 +1,14 @@
 /*!
- * Flapboard 1.0.0
+ * Clatterwerk 1.0.0
  * Split-flap (Solari) display boards for the web — zero dependencies.
- * https://github.com/[YOUR-GITHUB]/flapboard
+ * https://github.com/[YOUR-GITHUB]/clatterwerk
  * Copyright (c) 2026 [YOUR NAME]
  * Released under the MIT License (keep this notice — that's the deal).
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) { module.exports = factory(); }
   else if (typeof define === "function" && define.amd) { define(factory); }
-  else { root.Flapboard = factory(); }
+  else { root.Clatterwerk = factory(); }
 }(typeof self !== "undefined" ? self : this, function () {
   "use strict";
 
@@ -43,11 +43,11 @@
   var FLY_MAX = 185, FLY_DECAY = 0.74, FLY_MIN = 60; // flywheel spin-up curve
 
   var CELL_HTML =
-    '<div class="fb-half fb-top"><span class="fb-glyph"></span></div>' +
-    '<div class="fb-half fb-bottom"><span class="fb-glyph"></span><div class="fb-shade fb-sh-slot"></div></div>' +
-    '<div class="fb-flap fb-ftop"><span class="fb-glyph"></span><div class="fb-shade fb-sh-top"></div></div>' +
-    '<div class="fb-flap fb-fbot"><span class="fb-glyph"></span><div class="fb-shade fb-sh-bot"></div></div>' +
-    '<div class="fb-split"></div>';
+    '<div class="cw-half cw-top"><span class="cw-glyph"></span></div>' +
+    '<div class="cw-half cw-bottom"><span class="cw-glyph"></span><div class="cw-shade cw-sh-slot"></div></div>' +
+    '<div class="cw-flap cw-ftop"><span class="cw-glyph"></span><div class="cw-shade cw-sh-top"></div></div>' +
+    '<div class="cw-flap cw-fbot"><span class="cw-glyph"></span><div class="cw-shade cw-sh-bot"></div></div>' +
+    '<div class="cw-split"></div>';
 
   function nb(ch) { return ch === " " ? " " : ch; }
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -61,7 +61,7 @@
 
   function Board(el, opts) {
     if (typeof el === "string") { el = document.querySelector(el); }
-    if (!el) { throw new Error("Flapboard: mount element not found"); }
+    if (!el) { throw new Error("Clatterwerk: mount element not found"); }
     this.el = el;
     this.opts = Object.assign({}, DEFAULTS, opts || {});
     if (!(this.opts.speed > 0)) { this.opts.speed = 1; }
@@ -74,9 +74,9 @@
     this._busy = false;
     this._offs = [];
 
-    el.classList.add("flapboard", this.opts.threeD ? "flapboard--3d" : "flapboard--flat");
+    el.classList.add("clatterwerk", this.opts.threeD ? "clatterwerk--3d" : "clatterwerk--flat");
     this._row = document.createElement("div");
-    this._row.className = "fb-row";
+    this._row.className = "cw-row";
     el.appendChild(this._row);
 
     var h = parseFloat(getComputedStyle(el).getPropertyValue("--flap-height")) || 44;
@@ -142,19 +142,19 @@
   Board.prototype._ensureWidth = function (n) {
     while (this._cells.length < n) {
       var c = document.createElement("div");
-      c.className = "fb-cell";
+      c.className = "cw-cell";
       c.innerHTML = CELL_HTML;
       var cell = {
         el: c,
-        top: c.querySelector(".fb-top .fb-glyph"),
-        bot: c.querySelector(".fb-bottom .fb-glyph"),
-        ftop: c.querySelector(".fb-ftop"),
-        ftopG: c.querySelector(".fb-ftop .fb-glyph"),
-        fbot: c.querySelector(".fb-fbot"),
-        fbotG: c.querySelector(".fb-fbot .fb-glyph"),
-        shT: c.querySelector(".fb-sh-top"),
-        shB: c.querySelector(".fb-sh-bot"),
-        shSlot: c.querySelector(".fb-sh-slot"),
+        top: c.querySelector(".cw-top .cw-glyph"),
+        bot: c.querySelector(".cw-bottom .cw-glyph"),
+        ftop: c.querySelector(".cw-ftop"),
+        ftopG: c.querySelector(".cw-ftop .cw-glyph"),
+        fbot: c.querySelector(".cw-fbot"),
+        fbotG: c.querySelector(".cw-fbot .cw-glyph"),
+        shT: c.querySelector(".cw-sh-top"),
+        shB: c.querySelector(".cw-sh-bot"),
+        shSlot: c.querySelector(".cw-sh-slot"),
         cur: this._blank,
         j: 0.9 + Math.random() * 0.2  // per-cell motor speed variance
       };
@@ -279,7 +279,7 @@
     var cb = name === "start" ? this.opts.onStart : this.opts.onSettle;
     if (typeof cb === "function") { try { cb(value, this); } catch (e) {} }
     try {
-      this.el.dispatchEvent(new CustomEvent("flapboard:" + name, {
+      this.el.dispatchEvent(new CustomEvent("clatterwerk:" + name, {
         bubbles: true, detail: { board: this, value: value }
       }));
     } catch (e) {}
@@ -367,7 +367,7 @@
       this.el.getAnimations({ subtree: true }).forEach(function (a) { try { a.cancel(); } catch (e) {} });
     } catch (e) {}
     if (this._row.parentNode) { this._row.parentNode.removeChild(this._row); }
-    this.el.classList.remove("flapboard", "flapboard--3d", "flapboard--flat");
+    this.el.classList.remove("clatterwerk", "clatterwerk--3d", "clatterwerk--flat");
     this._cells.length = 0;
   };
 
@@ -431,16 +431,16 @@
   };
 
   /* ------------------------------------------------------------ Declarative */
-  // <span data-flapboard="1589" data-flap-mode="cascade" data-flap-group="stats"></span>
+  // <span data-clatterwerk="1589" data-flap-mode="cascade" data-flap-group="stats"></span>
 
   function mount(root) {
     root = root == null ? document
       : (typeof root === "string" ? document.querySelector(root) : root);
     var boards = [], groups = {};
     if (!root) { return { boards: boards, groups: groups }; }
-    var nodes = root.querySelectorAll("[data-flapboard]");
+    var nodes = root.querySelectorAll("[data-clatterwerk]");
     for (var i = 0; i < nodes.length; i++) {
-      var n = nodes[i], d = n.dataset, o = { value: d.flapboard || "" };
+      var n = nodes[i], d = n.dataset, o = { value: d.clatterwerk || "" };
       if (d.flapMode)  { o.mode = d.flapMode; }
       if (d.flapChars) { o.chars = d.flapChars; }
       if (d.flapWidth) { o.width = parseInt(d.flapWidth, 10) || 0; }

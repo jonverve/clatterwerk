@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Flapboard are documented here. The format follows
+All notable changes to Clatterwerk are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project adheres to
 [Semantic Versioning](https://semver.org/).
 
@@ -22,8 +22,8 @@ All notable changes to Flapboard are documented here. The format follows
   rebound and cell shudder. Off = classic flat look on the same engine.
 - Groups: boards in separate DOM locations driven as one machine, with
   array-or-scalar `set()` and `listen()` trigger binding.
-- Declarative mounting via `[data-flapboard]` attributes and
-  `Flapboard.mount()`.
+- Declarative mounting via `[data-clatterwerk]` attributes and
+  `Clatterwerk.mount()`.
 - `flipTime` option — seconds per flip, the master tempo all modes scale
   from; adjustable at runtime, with a `data-flap-time` attribute and a
   `speed` rate multiplier on top.

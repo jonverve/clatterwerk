@@ -1,4 +1,4 @@
-# Contributing to Flapboard
+# Contributing to Clatterwerk
 
 Thanks for your interest! This project values smallness and reliability over
 features. Before adding anything, ask whether the physical machine being
@@ -6,7 +6,7 @@ imitated would do it.
 
 ## Ground rules
 
-- **Zero dependencies, no build step.** `flapboard.js` and `flapboard.css`
+- **Zero dependencies, no build step.** `clatterwerk.js` and `clatterwerk.css`
   ship exactly as they live in this repo. PRs that introduce a toolchain,
   framework, or runtime dependency will be declined.
 - **No backfaces, ever.** The flip must remain two single-faced quarter-turns.
@@ -22,7 +22,7 @@ imitated would do it.
 
 There is no test harness — the examples page is the test bed:
 
-1. Edit `flapboard.js` / `flapboard.css`.
+1. Edit `clatterwerk.js` / `clatterwerk.css`.
 2. Open `examples/index.html` from disk in Chrome, Firefox, and Safari.
 3. Exercise every demo: all three modes, sweep, intro, flat mode, the letter
    drum, and rapid-fire clicking (update coalescing).
@@ -40,6 +40,6 @@ There is no test harness — the examples page is the test bed:
 
 ## Reporting rendering glitches
 
-Include: browser + version, OS, GPU if known, `Flapboard.lowEnd` value,
+Include: browser + version, OS, GPU if known, `Clatterwerk.lowEnd` value,
 whether `threeD` was on, and ideally a screenshot or recording. Rendering
 bugs are taken seriously here — they are the whole point of the library.

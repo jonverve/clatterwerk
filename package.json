@@ -1,12 +1,12 @@
 {
-  "name": "flapboard",
+  "name": "clatterwerk",
   "version": "1.0.0",
   "description": "Split-flap (Solari) display boards for the web — physical drum mechanics, glitch-free no-backface rendering, zero dependencies.",
-  "main": "flapboard.js",
-  "style": "flapboard.css",
+  "main": "clatterwerk.js",
+  "style": "clatterwerk.css",
   "files": [
-    "flapboard.js",
-    "flapboard.css",
+    "clatterwerk.js",
+    "clatterwerk.css",
     "README.md",
     "LICENSE"
   ],
@@ -15,7 +15,7 @@
     "splitflap",
     "solari",
     "flip",
-    "flipboard",
+    "clatterwork",
     "departure-board",
     "counter",
     "ticker",
@@ -27,10 +27,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/[YOUR-GITHUB]/flapboard.git"
+    "url": "git+https://github.com/[YOUR-GITHUB]/clatterwerk.git"
   },
-  "homepage": "https://github.com/[YOUR-GITHUB]/flapboard#readme",
+  "homepage": "https://github.com/[YOUR-GITHUB]/clatterwerk#readme",
   "bugs": {
-    "url": "https://github.com/[YOUR-GITHUB]/flapboard/issues"
+    "url": "https://github.com/[YOUR-GITHUB]/clatterwerk/issues"
   }
 }

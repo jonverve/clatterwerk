@@ -1,4 +1,4 @@
-# Flapboard
+# Clatterwerk
 
 Split-flap ("Solari") display boards for the web — the departure-board effect, engineered like the
 physical machine and rendered without the glitches that plague CSS flip animations.
@@ -6,11 +6,11 @@ physical machine and rendered without the glitches that plague CSS flip animatio
 **Zero dependencies. No build step. One JS file + one CSS file.**
 
 ```html
-<link rel="stylesheet" href="flapboard.css">
-<script src="flapboard.js"></script>
+<link rel="stylesheet" href="clatterwerk.css">
+<script src="clatterwerk.js"></script>
 <div id="counter"></div>
 <script>
-  const board = Flapboard.create("#counter", { value: "1589" });
+  const board = Clatterwerk.create("#counter", { value: "1589" });
   board.set("2026");           // clatters through the drum to the new value
 </script>
 ```
@@ -24,7 +24,7 @@ the 90° crossing it paints the *backside* of the front face — the old glyph, 
 hinge — which flashes as bright distorted fragments at the bottom of the card. It is intermittent,
 worse on slower machines, and impossible to mask.
 
-Flapboard's flip is **two single-faced quarter-turns**: the old character's top half falls
+Clatterwerk's flip is **two single-faced quarter-turns**: the old character's top half falls
 0° → −90° and parks edge-on (projected height zero), handing off — on the compositor's own
 timeline, with no JavaScript in the seam — to the new character's bottom half falling 90° → 0°.
 No element in the system has a reverse side, so the renderer *cannot* paint one. The bug isn't
@@ -43,25 +43,25 @@ Beyond that, the engine is built like the machine it imitates:
 - **Cheap.** Compositor-only properties (`transform`/`opacity`), cached node references, shared
   keyframe objects, zero per-flip allocations or DOM queries. Lighting auto-disables on low-end
   hardware.
-- **Accessible.** `prefers-reduced-motion` users get instant text (configurable). `flapboard:*`
+- **Accessible.** `prefers-reduced-motion` users get instant text (configurable). `clatterwerk:*`
   DOM events let you mirror values into live regions.
 
 ## Install
 
-Copy `flapboard.js` and `flapboard.css` into your project (they are the entire library), or:
+Copy `clatterwerk.js` and `clatterwerk.css` into your project (they are the entire library), or:
 
 ```
-npm install flapboard
+npm install clatterwerk
 ```
 
-Works as a plain `<script>` global (`Flapboard`), CommonJS, or AMD.
+Works as a plain `<script>` global (`Clatterwerk`), CommonJS, or AMD.
 
 ## API
 
 ### Creating boards
 
 ```js
-const board = Flapboard.create(elementOrSelector, {
+const board = Clatterwerk.create(elementOrSelector, {
   value: "208.5",          // initial value
   chars: " 0123456789.",   // drum, in rotation order; first char = blank/pad card
   width: 5,                // fixed cell count (0 = grow to fit; set this for stable layouts)
@@ -110,7 +110,7 @@ newest data instead of replaying every intermediate state.
 ### Groups — numbers in separate places, acting as one machine
 
 ```js
-const stats = Flapboard.group([flightsBoard, crewBoard, yearsBoard]);
+const stats = Clatterwerk.group([flightsBoard, crewBoard, yearsBoard]);
 
 stats.set(["1589", "788", "208.5"]);   // array = per-board values
 stats.sweep();                          // every board does a full revolution
@@ -127,21 +127,21 @@ the surface.
 ### Declarative mounting
 
 ```html
-<span data-flapboard="1589" data-flap-width="4" data-flap-group="stats"></span>
-<span data-flapboard="HELLO" data-flap-chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZ" data-flap-align="left"></span>
+<span data-clatterwerk="1589" data-flap-width="4" data-flap-group="stats"></span>
+<span data-clatterwerk="HELLO" data-flap-chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZ" data-flap-align="left"></span>
 <script>
-  const { boards, groups } = Flapboard.mount();   // scans [data-flapboard]
+  const { boards, groups } = Clatterwerk.mount();   // scans [data-clatterwerk]
   groups.stats.set(["2026"]);
 </script>
 ```
 
-Supported attributes: `data-flapboard` (value), `data-flap-mode`, `data-flap-chars`,
+Supported attributes: `data-clatterwerk` (value), `data-flap-mode`, `data-flap-chars`,
 `data-flap-width`, `data-flap-align`, `data-flap-time` (seconds per flip), `data-flap-speed`,
 `data-flap-3d`, `data-flap-group`.
 
 ### Events
 
-Boards dispatch bubbling `flapboard:start` and `flapboard:settle` CustomEvents
+Boards dispatch bubbling `clatterwerk:start` and `clatterwerk:settle` CustomEvents
 (`event.detail = { board, value }`) — handy for syncing ARIA live regions or analytics.
 
 ## The `threeD` ("3d flip") option
@@ -157,7 +157,7 @@ it is the reliability story), so flat mode is equally glitch-free.
 
 ## Theming
 
-Everything visual is a CSS custom property on `.flapboard` — override per instance:
+Everything visual is a CSS custom property on `.clatterwerk` — override per instance:
 
 ```css
 #myboard {
@@ -172,7 +172,7 @@ Everything visual is a CSS custom property on `.flapboard` — override per inst
 }
 ```
 
-See `flapboard.css` for the full list.
+See `clatterwerk.css` for the full list.
 
 ## Browser support
 
