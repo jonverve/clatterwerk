@@ -24,6 +24,9 @@ All notable changes to Flapboard are documented here. The format follows
   array-or-scalar `set()` and `listen()` trigger binding.
 - Declarative mounting via `[data-flapboard]` attributes and
   `Flapboard.mount()`.
+- `flipTime` option — seconds per flip, the master tempo all modes scale
+  from; adjustable at runtime, with a `data-flap-time` attribute and a
+  `speed` rate multiplier on top.
 - Per-flip watchdog (freeze-proof under animation throttling), latest-wins
   update coalescing, `prefers-reduced-motion` support, low-end hardware
   auto-detection for lighting, full CSS-custom-property theming.

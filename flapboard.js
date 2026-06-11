@@ -25,7 +25,9 @@
     align: "right",          // which side gets the blank padding ("right" pads left)
     threeD: true,            // true = full physical look; false = flat classic look
     mode: "cascade",         // default transition: "cascade" | "flywheel" | "single"
-    speed: 1,                // global speed multiplier (2 = twice as fast)
+    flipTime: 0.3,           // seconds for one single-mode flip — the master tempo;
+                             // drum steps, slams and the flywheel curve all scale with it
+    speed: 1,                // rate multiplier on top of flipTime (2 = twice as fast)
     stagger: 55,             // per-cell start offset in single mode (ms)
     shading: "auto",         // true | false | "auto" (on for 3D, off on low-end hardware)
     respectReducedMotion: true,
@@ -33,7 +35,7 @@
     onSettle: null           // function(value, board)
   };
 
-  // Timing constants (ms, before the speed multiplier).
+  // Timing constants (ms at the 0.3 s reference flipTime, before scaling).
   var T_RUN = 84;            // one drum step at cruise
   var T_SLAM = 175;          // final landing flip (cascade)
   var T_SLAM_FLY = 195;      // final landing flip (flywheel)
@@ -63,6 +65,7 @@
     this.el = el;
     this.opts = Object.assign({}, DEFAULTS, opts || {});
     if (!(this.opts.speed > 0)) { this.opts.speed = 1; }
+    if (!(this.opts.flipTime > 0)) { this.opts.flipTime = DEFAULTS.flipTime; }
     this._drum = String(this.opts.chars);
     this._blank = this._drum.charAt(0);
     this._cells = [];
@@ -117,7 +120,13 @@
     this._kfShudder = [{ transform: "translateY(0)" }, { transform: "translateY(1.5px)" }, { transform: "translateY(0)" }];
   };
 
-  Board.prototype._t = function (ms) { return ms / this.opts.speed; };
+  // Internal timings are expressed relative to a 0.3 s reference flip, so
+  // flipTime rescales the whole machine proportionally and speed divides on
+  // top. Both are read live: changing board.opts.flipTime (seconds) takes
+  // effect on the very next flap.
+  Board.prototype._t = function (ms) {
+    return ms * (this.opts.flipTime / 0.3) / this.opts.speed;
+  };
 
   Board.prototype._instant = function () {
     return this.opts.respectReducedMotion && RM.matches;
@@ -437,6 +446,7 @@
       if (d.flapWidth) { o.width = parseInt(d.flapWidth, 10) || 0; }
       if (d.flapAlign) { o.align = d.flapAlign; }
       if (d.flapSpeed) { o.speed = parseFloat(d.flapSpeed) || 1; }
+      if (d.flapTime)  { o.flipTime = parseFloat(d.flapTime) || 0; }
       if (d.flap3d != null) { o.threeD = d.flap3d !== "false"; }
       var b = new Board(n, o);
       boards.push(b);

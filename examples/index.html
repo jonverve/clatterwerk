@@ -14,11 +14,12 @@
   .stats { display: flex; gap: 34px; flex-wrap: wrap; align-items: flex-start; }
   .stat  { display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .stat small { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #8c8678; }
-  .ctl { margin-top: 22px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .ctl { margin-top: 22px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .ctl label { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #8c8678; }
   button { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
            background: #11151c; border: 1px solid #2a2f3a; color: #8c8678; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
   button:hover { color: #e9e4d6; border-color: #3a4150; }
-  input[type=number] { width: 110px; background: #0a0d12; color: #e9e4d6; border: 1px solid #2a2f3a; border-radius: 4px; padding: 6px 8px; font-family: ui-monospace, monospace; }
+  input { width: 110px; background: #0a0d12; color: #e9e4d6; border: 1px solid #2a2f3a; border-radius: 4px; padding: 6px 8px; font-family: ui-monospace, monospace; }
   .big { --flap-height: 64px; --flap-width: 44px; }
   .alpha { --flap-color: #d9b26a; }
 </style>
@@ -28,25 +29,36 @@
 <h1>Flapboard examples</h1>
 <p>Open this file in any browser — no build step, no server required.</p>
 
-<h2>1 &middot; A group of boards in separate places, driven by one trigger</h2>
-<p>Three boards mounted in different DOM locations, joined into a group. The buttons fire a single
-   CustomEvent; the group listens and updates all boards together.</p>
+<div class="ctl" style="margin-top:18px">
+  <label for="fliptime">Flip time (seconds)</label>
+  <input type="number" id="fliptime" value="0.3" min="0.05" max="3" step="0.05" aria-label="Flip time in seconds">
+  <label for="speed">Speed &times;</label>
+  <input type="number" id="speed" value="1" min="0.25" max="8" step="0.25" aria-label="Speed multiplier">
+</div>
+<p style="margin-top:8px"><small>Both variables apply live to every board below. Defaults: <code>flipTime: 0.3</code>,
+<code>speed: 1</code>. Flip time is the master tempo — drum steps, slams, and the flywheel
+curve all scale with it; speed is a rate multiplier on top.</small></p>
+
+<h2>1 &middot; Three boards in separate places, one machine</h2>
+<p>Three boards mounted in different DOM locations, joined into a group. Each button fires a single
+   CustomEvent; the group listens and all boards answer together — values can also arrive from a
+   WebSocket, a poll, or any other trigger source the same way.</p>
 <div class="demo">
   <div class="stats">
-    <div class="stat"><div id="b-flights"></div><small>Crew-flights</small></div>
-    <div class="stat"><div id="b-crew"></div><small>Crew</small></div>
-    <div class="stat"><div id="b-years"></div><small>Crew-years</small></div>
+    <div class="stat"><div id="b-trains"></div><small>Trains today</small></div>
+    <div class="stat"><div id="b-platforms"></div><small>Platforms open</small></div>
+    <div class="stat"><div id="b-delay"></div><small>Avg delay (min)</small></div>
   </div>
   <div class="ctl">
-    <button data-vals='["1589","788","208.5"]'>Full data</button>
-    <button data-vals='["412","256","96.3"]'>Filtered</button>
-    <button data-vals='["27","11","4.0"]'>Tiny subset</button>
+    <button data-vals='["1208","42","18.5"]'>Morning rush</button>
+    <button data-vals='["604","21","7.2"]'>Midday</button>
+    <button data-vals='["88","6","2.0"]'>Night service</button>
     <button id="sweep">Sweep (refresh)</button>
     <button id="intro">Intro (flywheel)</button>
   </div>
 </div>
 
-<h2>2 &middot; Modes</h2>
+<h2>2 &middot; A single board &amp; the three modes</h2>
 <p><em>Cascade</em>: all cells clatter at once at constant speed and stop independently — the live-update mode.
    <em>Flywheel</em>: spin-up, blur, hard stop — the page-load showpiece. <em>Single</em>: one quiet flip per cell.</p>
 <div class="demo">
@@ -71,35 +83,37 @@
 </div>
 
 <h2>4 &middot; Custom drum (letters) + declarative mount</h2>
-<p>This board was created from markup alone via <code>Flapboard.mount()</code> with an alphanumeric drum.</p>
+<p>This board was created from markup alone via <code>Flapboard.mount()</code> — note its
+   <code>data-flap-time="0.4"</code> giving it a slightly statelier tempo of its own until the
+   global control above overrides it.</p>
 <div class="demo">
-  <div class="alpha" data-flapboard="HELLO" data-flap-chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-:!?" data-flap-width="7" data-flap-align="left" data-flap-group="words"></div>
+  <div class="alpha" data-flapboard="HELLO" data-flap-chars=" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-:!?" data-flap-width="7" data-flap-align="left" data-flap-time="0.4" data-flap-group="words"></div>
   <div class="ctl">
     <button class="word">WORLD</button>
-    <button class="word">SOLARI</button>
-    <button class="word">BOARDS!</button>
+    <button class="word">DEPART</button>
+    <button class="word">ONTIME</button>
   </div>
 </div>
 
 <script src="../flapboard.js"></script>
 <script>
   /* Example 1 — group + trigger */
-  var flights = Flapboard.create("#b-flights", { value: "1589", width: 4 });
-  var crew    = Flapboard.create("#b-crew",    { value: "788",  width: 3 });
-  var years   = Flapboard.create("#b-years",   { value: "208.5", width: 5 });
-  var stats   = Flapboard.group([flights, crew, years]);
+  var trains    = Flapboard.create("#b-trains",    { value: "1208", width: 4 });
+  var platforms = Flapboard.create("#b-platforms", { value: "42",   width: 3 });
+  var delay     = Flapboard.create("#b-delay",     { value: "18.5", width: 5 });
+  var station   = Flapboard.group([trains, platforms, delay]);
 
-  stats.listen(document, "stats:change", function (e) { return e.detail; });
+  station.listen(document, "station:change", function (e) { return e.detail; });
   document.querySelectorAll("[data-vals]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      document.dispatchEvent(new CustomEvent("stats:change", { detail: JSON.parse(btn.dataset.vals) }));
+      document.dispatchEvent(new CustomEvent("station:change", { detail: JSON.parse(btn.dataset.vals) }));
     });
   });
-  document.getElementById("sweep").addEventListener("click", function () { stats.sweep(); });
-  document.getElementById("intro").addEventListener("click", function () { stats.intro(); });
+  document.getElementById("sweep").addEventListener("click", function () { station.sweep(); });
+  document.getElementById("intro").addEventListener("click", function () { station.intro(); });
 
-  /* Example 2 — modes */
-  var modes = Flapboard.create("#b-modes", { value: "1961", width: 4 });
+  /* Example 2 — a single board, three modes */
+  var modes = Flapboard.create("#b-modes", { value: "1956", width: 4 });
   function modeVal() { return document.getElementById("m-value").value || "0"; }
   document.getElementById("m-cascade").addEventListener("click", function () { modes.cascade(modeVal()); });
   document.getElementById("m-flywheel").addEventListener("click", function () { modes.flywheel(modeVal()); });
@@ -116,6 +130,17 @@
   var mounted = Flapboard.mount();
   document.querySelectorAll(".word").forEach(function (btn) {
     btn.addEventListener("click", function () { mounted.groups.words.set(btn.textContent); });
+  });
+
+  /* Global tempo variables — both are live; the next flap uses the new values. */
+  var allBoards = [trains, platforms, delay, modes, flat].concat(mounted.boards);
+  document.getElementById("fliptime").addEventListener("input", function () {
+    var v = parseFloat(this.value);
+    if (v > 0) { allBoards.forEach(function (b) { b.opts.flipTime = v; }); }
+  });
+  document.getElementById("speed").addEventListener("input", function () {
+    var v = parseFloat(this.value);
+    if (v > 0) { allBoards.forEach(function (b) { b.opts.speed = v; }); }
   });
 </script>
 </body>

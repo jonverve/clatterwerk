@@ -68,7 +68,8 @@ const board = Flapboard.create(elementOrSelector, {
   align: "right",          // "right" pads on the left like a counter; "left" for text
   threeD: true,            // see "The 3d flip option" below
   mode: "cascade",         // default transition mode
-  speed: 1,                // global speed multiplier
+  flipTime: 0.3,           // seconds per flip — the master tempo (see below)
+  speed: 1,                // rate multiplier on top of flipTime
   stagger: 55,             // per-cell delay (ms) in single mode
   shading: "auto",         // true | false | "auto"
   respectReducedMotion: true,
@@ -90,6 +91,16 @@ const board = Flapboard.create(elementOrSelector, {
 | `board.snap(value)` | Instant, unanimated set. The escape hatch (used internally for reduced motion). |
 | `board.listen(target, event, map?)` | Subscribe the board to an event source; `map(event)` returns the new value. Returns an unsubscribe function. |
 | `board.destroy()` | Cancel everything and remove the generated DOM. |
+
+**Tempo.** `flipTime` is the duration of one single-mode flip in **seconds** (default `0.3`);
+drum steps, slam landings, and the flywheel spin-up curve all scale proportionally from it.
+`speed` is a rate multiplier applied on top (handy for nudging one board in a group). Both are
+read live — change them at runtime and the very next flap obeys:
+
+```js
+board.opts.flipTime = 0.6;   // statelier
+board.opts.speed = 2;        // twice as fast
+```
 
 Properties: `board.value` (current string, padding stripped), `board.animating`.
 All transition methods return a promise that resolves when the board is idle. Calls made while a
@@ -125,7 +136,8 @@ the surface.
 ```
 
 Supported attributes: `data-flapboard` (value), `data-flap-mode`, `data-flap-chars`,
-`data-flap-width`, `data-flap-align`, `data-flap-speed`, `data-flap-3d`, `data-flap-group`.
+`data-flap-width`, `data-flap-align`, `data-flap-time` (seconds per flip), `data-flap-speed`,
+`data-flap-3d`, `data-flap-group`.
 
 ### Events
 
