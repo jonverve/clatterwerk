@@ -107,6 +107,11 @@ All transition methods return a promise that resolves when the board is idle. Ca
 transition runs are coalesced — only the **latest** value wins, so dense triggers settle on the
 newest data instead of replaying every intermediate state.
 
+Like the physical machine, `set()` (and the mode shorthands) move **nothing when the value is
+unchanged** — cells only travel to characters they aren't already showing. When you want motion
+anyway (a demo button, an attention nudge), call `sweep({ mode })` for a full revolution back to
+the same value.
+
 ### Groups — numbers in separate places, acting as one machine
 
 ```js

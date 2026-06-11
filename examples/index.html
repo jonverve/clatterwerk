@@ -60,7 +60,9 @@ curve all scale with it; speed is a rate multiplier on top.</small></p>
 
 <h2>2 &middot; A single board &amp; the three modes</h2>
 <p><em>Cascade</em>: all cells clatter at once at constant speed and stop independently — the live-update mode.
-   <em>Flywheel</em>: spin-up, blur, hard stop — the page-load showpiece. <em>Single</em>: one quiet flip per cell.</p>
+   <em>Flywheel</em>: spin-up, blur, hard stop — the page-load showpiece. <em>Single</em>: one quiet flip per cell.
+   Like the real machine, <code>set()</code> moves nothing when the value is unchanged, so these buttons fall
+   back to a full-revolution <code>sweep()</code> when the number in the box is already showing.</p>
 <div class="demo">
   <div id="b-modes" class="big"></div>
   <div class="ctl">
@@ -106,7 +108,9 @@ curve all scale with it; speed is a rate multiplier on top.</small></p>
   station.listen(document, "station:change", function (e) { return e.detail; });
   document.querySelectorAll("[data-vals]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      document.dispatchEvent(new CustomEvent("station:change", { detail: JSON.parse(btn.dataset.vals) }));
+      var vals = JSON.parse(btn.dataset.vals);
+      if (vals.join("|") === [trains.value, platforms.value, delay.value].join("|")) { station.sweep(); return; }
+      document.dispatchEvent(new CustomEvent("station:change", { detail: vals }));
     });
   });
   document.getElementById("sweep").addEventListener("click", function () { station.sweep(); });
@@ -114,10 +118,14 @@ curve all scale with it; speed is a rate multiplier on top.</small></p>
 
   /* Example 2 — a single board, three modes */
   var modes = Clatterwerk.create("#b-modes", { value: "1956", width: 4 });
-  function modeVal() { return document.getElementById("m-value").value || "0"; }
-  document.getElementById("m-cascade").addEventListener("click", function () { modes.cascade(modeVal()); });
-  document.getElementById("m-flywheel").addEventListener("click", function () { modes.flywheel(modeVal()); });
-  document.getElementById("m-single").addEventListener("click", function () { modes.single(modeVal()); });
+  function demoMode(mode) {
+    var v = document.getElementById("m-value").value || "0";
+    if (modes.value === v) { modes.sweep({ mode: mode }); }
+    else { modes.set(v, { mode: mode }); }
+  }
+  document.getElementById("m-cascade").addEventListener("click", function () { demoMode("cascade"); });
+  document.getElementById("m-flywheel").addEventListener("click", function () { demoMode("flywheel"); });
+  document.getElementById("m-single").addEventListener("click", function () { demoMode("single"); });
 
   /* Example 3 — flat (threeD off) */
   var flat = Clatterwerk.create("#b-flat", { value: "365.25", width: 6, threeD: false });
@@ -129,7 +137,11 @@ curve all scale with it; speed is a rate multiplier on top.</small></p>
   /* Example 4 — declarative */
   var mounted = Clatterwerk.mount();
   document.querySelectorAll(".word").forEach(function (btn) {
-    btn.addEventListener("click", function () { mounted.groups.words.set(btn.textContent); });
+    btn.addEventListener("click", function () {
+      var w = btn.textContent;
+      if (mounted.boards[0].value === w) { mounted.groups.words.sweep(); return; }
+      mounted.groups.words.set(w);
+    });
   });
 
   /* Global tempo variables — both are live; the next flap uses the new values. */
