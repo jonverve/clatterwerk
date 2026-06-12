@@ -23,14 +23,14 @@
     "vanilla",
     "zero-dependency"
   ],
-  "author": "[YOUR NAME]",
+  "author": "Jon Verville",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/[YOUR-GITHUB]/clatterwerk.git"
+    "url": "git+https://github.com/jonverve/clatterwerk.git"
   },
-  "homepage": "https://github.com/[YOUR-GITHUB]/clatterwerk#readme",
+  "homepage": "https://github.com/jonverve/clatterwerk#readme",
   "bugs": {
-    "url": "https://github.com/[YOUR-GITHUB]/clatterwerk/issues"
+    "url": "https://github.com/jonverve/clatterwerk/issues"
   }
 }

@@ -1,8 +1,8 @@
 /*!
  * Clatterwerk 1.0.0
  * Split-flap (Solari) display boards for the web — zero dependencies.
- * https://github.com/[YOUR-GITHUB]/clatterwerk
- * Copyright (c) 2026 [YOUR NAME]
+ * https://github.com/jonverve/clatterwerk
+ * Copyright (c) 2026 Jon Verville
  * Released under the MIT License (keep this notice — that's the deal).
  */
 (function (root, factory) {

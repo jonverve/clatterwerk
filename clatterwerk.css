@@ -1,6 +1,6 @@
 /*!
  * Clatterwerk 1.0.0 — stylesheet
- * Copyright (c) 2026 [YOUR NAME] — MIT License
+ * Copyright (c) 2026 Jon Verville — MIT License
  *
  * Every visual knob is a CSS custom property on .clatterwerk, so boards can be
  * themed per-instance:  #myboard { --flap-height: 64px; --flap-color: #fff; }
